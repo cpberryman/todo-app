@@ -1,5 +1,6 @@
 *.iml
 /target/
 .idea/
-build
 node_modules
+node
+/src/main/resources/static/built

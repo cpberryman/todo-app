@@ -19,12 +19,5 @@ module.exports = {
 				use: 'babel-loader'
 			}
 		]
-	},
-	plugins: [
-		new HTMLWebpackPlugin({
-			template: __dirname + '/src/main/resources/static/templates/index.html',
-			filename: 'index.html',
-			inject: 'body'
-		}),
-	]
+	}
 };
