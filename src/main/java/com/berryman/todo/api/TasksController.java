@@ -50,8 +50,9 @@ public class TasksController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteTask(@PathVariable Integer id) {
+    public ResponseEntity<Task> deleteTask(@PathVariable Integer id) {
         taskRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
