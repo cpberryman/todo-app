@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import fetch from 'node-fetch'
+//import { getTasks } from '../ApiClients.js'
 
 const styles = theme => ({
   root: {
@@ -26,6 +28,15 @@ class AddItemForm extends Component {
     this.deleteItem = this.deleteItem.bind(this)
   }
 
+  componentDidMount () {
+    fetch('http://localhost:9000/tasks/find/all', {
+         method: 'GET'
+    })
+    .then(response => response.json())
+    .then(json => this.setState({items: json}))
+    .catch(error => console.error(error))
+  }
+
   handleChange (event) {
     this.setState({value: event.target.value})
   }
@@ -33,13 +44,28 @@ class AddItemForm extends Component {
   handleClick (event) {
     const { items, value } = this.state;
     if (value !== '') {
-        this.setState({value : '', items: [value, ...items]})
+        this.setState({value : '', items: [{description: value, complete: false}, ...items]})
+        fetch('http://localhost:9000/tasks/add', {
+                 method: 'POST',
+                 headers: {
+                     'Accept': 'application/json, text/plain, */*',
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify({description: value, complete: false})
+              })
+        .then(response => response.json())
+        .then(json => console.error(json))
+        .catch(error => console.error(error))
     }
   }
 
   deleteItem (itemToDelete) {
     const { items } = this.state;
     this.setState({items: items.filter(item => item !== itemToDelete)})
+    fetch('http://localhost:9000/tasks/delete/' + itemToDelete.id , {
+        method: 'DELETE'
+    })
+    .catch(error => console.error(error))
   }
 
   render () {
@@ -61,7 +87,7 @@ class AddItemForm extends Component {
         >Add task</Button>
         </span>
       </AppBar>
-        {items.map(item => <p key={item} onClick={() => this.deleteItem(item)}>{item}</p>)}
+        {items.map(item => <p key={item.id} onClick={() => this.deleteItem(item)}>{item.description}</p>)}
       </div>
     )
   }
